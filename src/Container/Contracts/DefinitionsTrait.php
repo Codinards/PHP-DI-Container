@@ -100,7 +100,7 @@ trait DefinitionsTrait
         try {
             $refletionClass = new ReflectionClass($name);
         } catch (ReflectionException $e) {
-            throw new NotFoundException('the "' . __METHOD__ . "\" can not resolve the key \"$name\"");
+            $this->throwCanNotResolveException(__METHOD__, $name);
         }
 
         $this->container->setResolvingId($name);
@@ -143,7 +143,7 @@ trait DefinitionsTrait
                                 return $value;
                             }
 
-                            throw new ContainerException('the method "' . __METHOD__ . '" can not resolve the key "' . $param->getName() . '"');
+                            $this->throwCanNotResolveException(__METHOD__, $param->getName(), true);
                         }
                     }, $constructorParams)
                 );
@@ -158,7 +158,7 @@ trait DefinitionsTrait
             return $instance;
         }
 
-        throw new NotFoundException('the method "' . __METHOD__ . "\" can not resolve the key \"$name\"");
+        $this->throwCanNotResolveException(__METHOD__, $name);
     }
 
     private function resolveCallback($reflectionFunction)
@@ -169,7 +169,11 @@ trait DefinitionsTrait
         return $instance->invokeArgs(
             array_map(function ($param) use ($instance) {
                 if (!$param->getClass()) {
-                    throw new DefinitionsException('The argument "$' . $param->getName() . '" pass in a definition closure in "' . $instance->getFileName() . ' -> line:' . $instance->getStartLine() . '" must be a string name of an instanciable class');
+                    $message = 'The argument "$' . $param->getName() . '" pass in a definition closure in "';
+                    $message .= $instance->getFileName() . ' -> line:' . $instance->getStartLine();
+                    $message .= '" must be a string name of an instanciable class';
+
+                    throw new DefinitionsException($message);
                 }
 
                 return $this->get($param->getClass()->getName());
@@ -221,6 +225,14 @@ trait DefinitionsTrait
     }
 
     /**
+     * @return mixed
+     */
+    public function getParameters(string $id)
+    {
+        return $this->container->getParameters($id);
+    }
+
+    /**
      * Set a value in parameters list binding by a key.
      *
      * @param mixed $parameter
@@ -262,11 +274,11 @@ trait DefinitionsTrait
     }
 
     /**
-     * Assert if a defintion is shared (if is a factory).
+     * Assert if a definition is shared (if is a factory).
      */
-    public function isShared(string $defintion): bool
+    public function isShared(string $definition): bool
     {
-        return \in_array($defintion, $this->container->shared, true);
+        return $this->container->isShared($definition);
     }
 
     /**
@@ -277,5 +289,18 @@ trait DefinitionsTrait
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * Undocumented function.
+     *
+     * @throw \NJContainer\Container\Exceptions\NotFoundException
+     */
+    private function throwCanNotResolveException(string $method, string $name, $containerException = false)
+    {
+        if (!$containerException) {
+            throw new NotFoundException('the method "' . $method . "\" can not resolve the key \"$name\"");
+        }
+        throw new ContainerException('the method "' . $method . "\" can not resolve the key \"$name\"");
     }
 }

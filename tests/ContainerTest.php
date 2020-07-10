@@ -1,6 +1,6 @@
 <?php
 
-namespace NJContainer\tests;
+namespace NJContainer\Tests;
 
 use NJContainer\Container\Container;
 use NJContainer\Container\Exceptions\DefinitionsException;
@@ -21,18 +21,16 @@ use stdClass;
 
 class ContainerTest extends TestCase
 {
-    public function testNotFoundException()
-    {
-        $this->expectException(NotFoundException::class);
-        $this->assertIsString('name', $this->getContainer()->get('hello', true));
-    }
-
     public function testSetDefinition()
     {
         $container = $this->getContainer();
         $this->assertInstanceOf(Container::class, $container->get(ContainerInterface::class));
         $container->set('pdo', new PDO('sqlite::memory', null, null));
         $this->assertInstanceOf(PDO::class, $container->get('pdo'));
+
+        /* Test NotFoundException */
+        $this->expectException(NotFoundException::class);
+        $this->assertIsString('name', $this->getContainer()->get('hello', true));
     }
 
     public function testSetSeveralDefinitionsUsingArray()
@@ -130,28 +128,5 @@ class ContainerTest extends TestCase
     private function getContainer(): Container
     {
         return new Container();
-    }
-
-    /**
-     * @param mixed ...$vars
-     *
-     * @return void
-     */
-    private function dump(...$vars)
-    {
-        foreach ($vars as $var) {
-            print_r($var);
-        }
-    }
-
-    /**
-     * @param mixed ...$vars
-     *
-     * @return void
-     */
-    private function dd(...$vars)
-    {
-        \call_user_func_array([$this, 'dump'], $vars);
-        die();
     }
 }

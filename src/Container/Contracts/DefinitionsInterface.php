@@ -25,12 +25,4 @@ interface DefinitionsInterface
      * @param mixed $value
      */
     public function add(string $name, $value): self;
-
-    /*
-     * Resolve an object
-     *
-     * @param string $name
-     * @return void
-     */
-    //public function resolve(string $name);
 }
