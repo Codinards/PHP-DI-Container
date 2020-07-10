@@ -1,9 +1,7 @@
 
-composer req --dev friendsofphp/php-cs-fixer
-
-./vendor/bin/php-cs-fixer fix --div --dry-run
-
 # PHP Dependency Injection Container
+
+[![Build Status](https://travis-ci.org/JeanNguimfack/PHP-DI-Container.svg?branch=master)](https://travis-ci.org/JeanNguimfack/PHP-DI-Container)
 
 A simple dependency injection container for php projects
 
