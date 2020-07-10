@@ -143,9 +143,7 @@ trait DefinitionsTrait
                                 return $value;
                             }
 
-                            throw new ContainerException(
-                                'the method "' . __METHOD__ . '" can not resolve the key "' . $param->getName() . '"'
-                            );
+                            throw new ContainerException('the method "' . __METHOD__ . '" can not resolve the key "' . $param->getName() . '"');
                         }
                     }, $constructorParams)
                 );
@@ -171,11 +169,7 @@ trait DefinitionsTrait
         return $instance->invokeArgs(
             array_map(function ($param) use ($instance) {
                 if (!$param->getClass()) {
-                    throw new DefinitionsException(
-                        'The argument "$' . $param->getName() . '" pass in a definition closure in "'
-                        . $instance->getFileName() . ' -> line:' . $instance->getStartLine()
-                        . '" must be a string name of an instanciable class'
-                    );
+                    throw new DefinitionsException('The argument "$' . $param->getName() . '" pass in a definition closure in "' . $instance->getFileName() . ' -> line:' . $instance->getStartLine() . '" must be a string name of an instanciable class');
                 }
 
                 return $this->get($param->getClass()->getName());
@@ -183,7 +177,7 @@ trait DefinitionsTrait
         );
     }
 
-    public function resolveArray(string $name, array $instance): array
+    private function resolveArray(string $name, array $instance): array
     {
         foreach ($instance as $key => $definition) {
             if (\is_string($definition)) {

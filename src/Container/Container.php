@@ -101,9 +101,7 @@ class Container implements ContainerInterface
     {
         foreach ($definitions as $id => $definition) {
             if (!\is_array($definition)) {
-                throw new DefinitionsException(
-                    'The value of alias dependency must be an array([$id => [$definition, $shared])'
-                );
+                throw new DefinitionsException('The value of alias dependency must be an array([$id => [$definition, $shared])');
             }
             $shared = $definition[1] ?? false;
             $this->set($id, $definition[0], $shared);
@@ -201,9 +199,7 @@ class Container implements ContainerInterface
     public function isNotLocked()
     {
         if (true === $this->locked) {
-            throw new ContainerException(
-                "The container is already locked. It's too late to add some dependency definition"
-            );
+            throw new ContainerException("The container is already locked. It's too late to add some dependency definition");
         }
     }
 

@@ -2,6 +2,8 @@
 # PHP Dependency Injection Container
 
 [![Build Status](https://travis-ci.org/JeanNguimfack/PHP-DI-Container.svg?branch=master)](https://travis-ci.org/JeanNguimfack/PHP-DI-Container)
+[![Coverage Status](https://coveralls.io/repos/github/JeanNguimfack/PHP-DI-Container/badge.svg?branch=master)](https://coveralls.io/github/JeanNguimfack/PHP-DI-Container?branch=master)
+
 
 A simple dependency injection container for php projects
 
