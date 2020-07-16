@@ -14,7 +14,7 @@
             "NJContainer\\": "src/",
             "NJContainer\\Tests\\": "tests/"
         },
-        "files": ["src/function.php"]
+        "files": ["src/Container/function.php"]
     },
     "require": {
         "php" : "^7.3",

@@ -15,7 +15,7 @@ class RegisterDefinition
     private $name;
 
     /**
-     * Value for add definition.
+     * Value for a definition.
      *
      * @var mixed
      */
@@ -42,6 +42,13 @@ class RegisterDefinition
      */
     private $isAdded = false;
 
+    /**
+     * Define the class instance as a factory
+     *
+     * @param string|null $name
+     *
+     * @return self
+     */
     public function factory(?string $name = null): self
     {
         $this->name = $name;
@@ -52,6 +59,8 @@ class RegisterDefinition
 
     /**
      * Get parameters list for registries instances.
+     *
+     * @return array
      */
     public function getParameters(): array
     {
@@ -60,6 +69,10 @@ class RegisterDefinition
 
     /**
      * Set parameters list for registries instances.
+     *
+     * @param array $parameters
+     *
+     * @return self
      */
     public function setParameters(array $parameters): self
     {
@@ -69,9 +82,11 @@ class RegisterDefinition
     }
 
     /**
-     * Control if the parametres list has key $id.
+     * Look if the parameters list has key $id.
      *
      * @param string $id service alias name
+     *
+     * @return bool
      */
     public function hasParameter(string $id): bool
     {
@@ -79,7 +94,7 @@ class RegisterDefinition
     }
 
     /**
-     * retrieve a value from paramters list using it key.
+     * retrieve a value from parameters list using it key.
      *
      * @param string $id service alias name
      *
@@ -93,7 +108,10 @@ class RegisterDefinition
     /**
      * Set a value in parameters list binding by a key.
      *
+     * @param string $id
      * @param mixed $parameter
+     *
+     * @return self
      */
     public function setParameter(string $id, $parameter): self
     {
@@ -115,36 +133,35 @@ class RegisterDefinition
     /**
      * Set definition alias name.
      *
-     * @param string $name defintion alias name
+     * @param string|null $name defintion alias name
      *
      * @return self
      */
-    public function setName(?string $name = null)
+    public function setName(?string $name = null):self
     {
         $this->name = $name;
-        //$this->isFactory = false;
 
         return $this;
     }
 
     /**
-     * Get undocumented variable.
+     * retrieve value of isFactory property.
      *
      * @return bool
      */
-    public function isFactory()
+    public function isFactory():bool
     {
         return $this->isFactory;
     }
 
     /**
-     * Set undocumented variable.
+     * Set value of isFactory property
      *
      * @param bool $isFactory Undocumented variable
      *
      * @return self
      */
-    public function setIsFactory(bool $isFactory)
+    public function setIsFactory(bool $isFactory):self
     {
         $this->isFactory = $isFactory;
 
@@ -153,6 +170,8 @@ class RegisterDefinition
 
     /**
      * Set that the definition is add to an old definition.
+     *
+     * @param bool $isAdded
      *
      * @return self
      */
@@ -165,6 +184,8 @@ class RegisterDefinition
 
     /**
      * Return true if the definition is add to an old definition.
+     *
+     * @return bool
      */
     public function isAdded(): bool
     {
@@ -172,7 +193,7 @@ class RegisterDefinition
     }
 
     /**
-     * Get value for add definition.
+     * Get value for a definition.
      *
      * @return mixed
      */
@@ -182,9 +203,11 @@ class RegisterDefinition
     }
 
     /**
-     * Set value for add definition.
+     * Set value for a definition.
      *
      * @param mixed $value
+     *
+     * @return self
      */
     public function setValue($value): self
     {

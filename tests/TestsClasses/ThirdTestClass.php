@@ -13,4 +13,20 @@ class ThirdTestClass
         $this->firstTestClass = $firstTestClass;
         $this->secondtestClass = $secondtestClass;
     }
+
+    /**
+     * Get the value of secondtestClass
+     */
+    public function getSecondtestClass()
+    {
+        return $this->secondtestClass;
+    }
+
+    /**
+     * Get the value of firstTestClass
+     */
+    public function getFirstTestClass()
+    {
+        return $this->firstTestClass;
+    }
 }

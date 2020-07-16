@@ -1,12 +1,13 @@
 <?php
 
-use function NJContainer\add;
-use function NJContainer\get;
+use function NJContainer\Container\add;
+use function NJContainer\Container\get;
 use NJContainer\Tests\TestsClasses\FirstTestClass;
 use NJContainer\Tests\TestsClasses\Request;
 use NJContainer\Tests\TestsClasses\Response;
 use NJContainer\Tests\TestsClasses\Route;
 use NJContainer\Tests\TestsClasses\SecondTestClass;
+use NJContainer\Tests\TestsClasses\SeventhTestClass;
 use NJContainer\Tests\TestsClasses\ThirdTestClass;
 use Psr\Container\ContainerInterface;
 
@@ -43,5 +44,14 @@ return [
         ]
     ],
 
-    'testAddHepler' => 'moi'
+    'testAddHelper' => 'moi',
+    'testAddHelper2' => get(Request::class),
+    'testAddHelper3' => ['moi'],
+    'sevenTestClass.params' => [
+        get(Route::class),
+        get(FirstTestClass::class)
+    ],
+
+    SeventhTestClass::class => get()
+        ->setParameter('params', get('sevenTestClass.params'))
 ];

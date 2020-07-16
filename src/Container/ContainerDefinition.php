@@ -2,10 +2,12 @@
 
 namespace NJContainer\Container;
 
+use NJContainer\Container\Contracts\ContainerDefinitionInterface;
+
 /**
  * @author Jean Nguimfack <nguimjeaner@gmail.com>
  */
-class ContainerDefinition
+class ContainerDefinition implements ContainerDefinitionInterface
 {
     /**
      * List of all objects constructor scalar parameters.
@@ -29,7 +31,7 @@ class ContainerDefinition
     private $shared = [];
 
     /**
-     * list of service which is in resolving process.
+     * list of definition alias in resolution
      *
      * @var string[]
      */
@@ -52,6 +54,8 @@ class ContainerDefinition
      *
      * @param string $id        service alias name
      * @param string $paramName parameter key name
+     *
+     * @return self
      */
     public function setParameters(string $id, array $parameters): self
     {
@@ -66,14 +70,11 @@ class ContainerDefinition
      * Control if the parametres list has key $id.
      *
      * @param string $id        service alias name
-     * @param string $paramName parameter key name
+     *
+     * @return bool
      */
-    public function hasParameter(string $id, string $paramName = null): bool
+    public function hasParameter(string $id): bool
     {
-        if ($paramName) {
-            return isset($this->parameters[$id]) && isset($this->parameters[$id][$paramName]);
-        }
-
         return isset($this->parameters[$id]);
     }
 
@@ -81,11 +82,11 @@ class ContainerDefinition
      * retrieve a value from paramters list using it key.
      *
      * @param string $id        service alias name
-     * @param string $paramName parameter key name
+     * @param string|null $paramName parameter key name
      *
      * @return mixed
      */
-    public function getParameter(string $id, string $paramName = null)
+    public function getParameter(string $id, ?string $paramName = null)
     {
         return (null !== $paramName) ? $this->parameters[$id][$paramName] : $this->parameters[$id];
     }
@@ -93,7 +94,11 @@ class ContainerDefinition
     /**
      * Set a value in parameters list binding by a key.
      *
+     * @param string $id
+     * @param string $paramName
      * @param mixed $parameter
+     *
+     * @return self
      */
     public function setParameter(string $id, string $paramName, $parameter): self
     {
@@ -105,31 +110,44 @@ class ContainerDefinition
     /**
      * Get list of all instances.
      *
+     * @param string|int $id
+     *
      * @return array
      */
-    public function get(string $id)
+    public function get($id)
     {
         return $this->instances[$id];
     }
+    
 
     /**
-     * Set list of all instances.
+     * Set a definition of an alias.
      *
-     * @param mixed $defintion list of all instances
+     * @param string $id
+     * @param mixed $definition
+     * @param bool $shared
      *
      * @return self
      */
-    public function set(string $id, $defintion)
+    public function set(string $id, $definition, bool $shared = false):self
     {
-        $this->instances[$id] = $defintion;
+        $this->instances[$id] = $definition;
+        if ($shared) {
+            $this->addShared($id);
+        }
 
         return $this;
     }
 
+
     /**
+     * look if a dependency alias is define
+     *
+     *@param string $id
+
      * @return bool
      */
-    public function has(string $id)
+    public function has($id)
     {
         return isset($this->instances[$id]);
     }
@@ -149,15 +167,24 @@ class ContainerDefinition
     }
 
     /**
-     * Assert if a defintion is shared (if is a factory).
+     * Assert if a definition is shared (if is a factory).
      *
-     * @param string $defintion
+     * @param string $definition
+     *
+     * @return bool
      */
     public function isShared(string $definition): bool
     {
         return \in_array($definition, $this->shared, true);
     }
 
+    /**
+     * Set an alias in the list of resolving alias
+     *
+     * @param string $id
+     *
+     * @return self
+     */
     public function setResolvingId(string $id): self
     {
         $this->resolvingId[] = $id;
@@ -165,6 +192,13 @@ class ContainerDefinition
         return $this;
     }
 
+    /**
+     * look if an alias definition is resolving
+     *
+     * @param string $id
+     *
+     * @return boolean
+     */
     public function isResolving(string $id)
     {
         return \in_array($id, $this->resolvingId, true);
@@ -180,6 +214,13 @@ class ContainerDefinition
         return $this->resolvingId;
     }
 
+    /**
+     * remove an dependency alias in the resolving list
+     *
+     * @param string $id
+     *
+     * @return void
+     */
     public function deleteResolvingId(string $id): void
     {
         if ($this->isResolving($id)) {

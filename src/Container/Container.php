@@ -2,15 +2,16 @@
 
 namespace NJContainer\Container;
 
+use NJContainer\Tests\TestsClasses\Response;
+use NJContainer\Container\Contracts\ContainerInterface;
 use NJContainer\Container\Exceptions\ContainerException;
 use NJContainer\Container\Exceptions\DefinitionsException;
-use NJContainer\Tests\TestsClasses\Response;
-use Psr\Container\ContainerInterface;
+use NJContainer\Container\Contracts\InstanceDefinitionInterface;
 
 /**
  * @author Jean Nguimfack <nguimjeaner@gmail.com>
  *
- * @version 1.0.0
+ * @version 1.1.0
  */
 class Container implements ContainerInterface
 {
@@ -28,11 +29,14 @@ class Container implements ContainerInterface
 
     /**
      * \NJContainer\Container\Container Constructor.
+     *
+     * @param null|\NJContainer\Container\Contracts\InstanceDefinitionInterface $instance
      */
-    public function __construct(InstanceDefinition $instance = null)
+    public function __construct(?InstanceDefinitionInterface $instance = null)
     {
         $this->instance = $instance ?? new InstanceDefinition();
-        $this->instance->add(ContainerInterface::class, $this);
+        $this->instance->set(\NJContainer\Container\Contracts\ContainerInterface::class, $this);
+        $this->instance->set(\Psr\Container\ContainerInterface::class, $this);
     }
 
     /**
@@ -44,7 +48,7 @@ class Container implements ContainerInterface
      * @throws NotFoundExceptionInterface  no entry was found for **this** identifier
      * @throws ContainerExceptionInterface error while retrieving the entry
      *
-     * @return mixed entry
+     * @return mixed
      */
     public function get($id, $shared = false)
     {
@@ -78,24 +82,26 @@ class Container implements ContainerInterface
     /**
      * Set a new definition in the container.
      *
+     * @param string $id
      * @param mixed $definition
      * @param bool  $shared,    use "true" to set an factory definition
+     *
+     * @return self
      */
     public function set(string $id, $definition, bool $shared = false): self
     {
         $this->isNotLocked();
-        $this->instance->add($id, $definition);
-        if ($shared) {
-            $this->instance->addShared($id);
-        }
-
+        $this->instance->set($id, $definition, $shared);
         return $this;
     }
 
     /**
      * Set definitions in the container using an array of [ $id => [$definition, $shared] ].
-     *
      * NOTE : the $shared item can be omitted
+     *
+     * @param array $definitions
+     *
+     * @return self
      */
     public function add(array $definitions): self
     {
@@ -113,6 +119,10 @@ class Container implements ContainerInterface
 
     /**
      * Set several parameters for specific alias definition.
+     * @param string $id
+     * @param array $parameters
+     *
+     * @return self
      */
     public function setParameters(string $id, array $parameters): self
     {
@@ -124,6 +134,10 @@ class Container implements ContainerInterface
 
     /**
      * Set several defintions using a file which return an array of definitions.
+     *
+     * @param string $definitionsPath
+     *
+     * @return self
      */
     public function addDefinition(string $definitionsPath): self
     {
@@ -169,9 +183,9 @@ class Container implements ContainerInterface
      * @param string $name,      parameter name
      * @param mixed  $parameter, parameter value
      *
-     * @return void
+     * @return self
      */
-    public function setParameter(string $id, string $name, $parameter)
+    public function setParameter(string $id, string $name, $parameter):self
     {
         $this->isNotLocked();
 
@@ -182,6 +196,8 @@ class Container implements ContainerInterface
 
     /**
      * Lock a container and return it.
+     *
+     * @return self
      */
     public function lock(): self
     {
@@ -197,7 +213,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function isNotLocked()
+    private function isNotLocked()
     {
         if (true === $this->locked) {
             $message = "The container is already locked. It's too late to add some dependency definition";
@@ -207,6 +223,8 @@ class Container implements ContainerInterface
 
     /**
      * Return the key list of definition which is resolving.
+     *
+     * @return array
      */
     public function getResolvingDefinitions(): array
     {

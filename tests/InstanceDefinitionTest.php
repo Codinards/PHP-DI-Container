@@ -6,7 +6,9 @@ use NJContainer\Container\Container;
 use NJContainer\Container\ContainerDefinition;
 use NJContainer\Container\InstanceDefinition;
 use NJContainer\Container\RegisterDefinition;
-use function NJContainer\get;
+use NJContainer\Tests\TestsClasses\FirstTestClass;
+
+use function NJContainer\Container\get;
 use NJContainer\Tests\TestsClasses\FourthTestClass;
 use PHPUnit\Framework\TestCase;
 
@@ -20,19 +22,22 @@ class InstanceDefinitionTest extends TestCase
 
     public function testManageParametersFunctions()
     {
-        /** Test InstanceDefinition::setParameter() and InstanceDefinition::getParameter() */
-        $instanceDef = $this->getInstance();
+        $definition = new ContainerDefinition();
+        //Test InstanceDefinition::setParameter() InstanceDefinition::getParameter() InstanceDefinition::hasParameter()
+        $instanceDef = $this->getInstance($definition);
         $instanceDef->setParameter(FourthTestClass::class, 'undefine1', get(FirstTestClass::class));
         $container = new Container($instanceDef);
         $container->addDefinition(__DIR__ . '/definitions/config.php');
         $container->addDefinition(__DIR__ . '/definitions/config2.php');
 
+        $this->asserttrue($definition->hasParameter(FourthTestClass::class));
+        $this->assertTrue($instanceDef->hasParameter(FourthTestClass::class, 'undefine1'));
         $this->assertInstanceOf(
             RegisterDefinition::class,
             $instanceDef->getParameter(FourthTestClass::class, 'undefine1')
         );
 
-        /** Test InstanceDefinition::setParameters() and InstanceDefinition::getParameters() */
+        // Test InstanceDefinition::setParameters() and InstanceDefinition::getParameters()
         $instanceDef = $this->getInstance();
         $instanceDef->setParameters(
             FourthTestClass::class,
@@ -49,6 +54,7 @@ class InstanceDefinitionTest extends TestCase
         $this->assertIsArray($parameters);
         $this->assertInstanceOf(RegisterDefinition::class, $parameters['undefine1']);
         $this->assertInstanceOf(RegisterDefinition::class, $parameters['undefine2']);
+        
 
         /* Test InstanceDefinition::addShared() and InstanceDefinition::isShared() */
         $this->assertFalse($instanceDef->isShared(FourthTestClass::class));
@@ -56,8 +62,22 @@ class InstanceDefinitionTest extends TestCase
         $this->assertTrue($instanceDef->isShared(FourthTestClass::class));
     }
 
-    private function getInstance(): InstanceDefinition
+    public function testForPrivateFunction()
     {
-        return new InstanceDefinition();
+        $instanceDef = $this->getInstance();
+        $instanceDef->setParameter(FourthTestClass::class, 'undefine1', get(FirstTestClass::class));
+        $container = new Container($instanceDef);
+        $container->addDefinition(__DIR__ . '/definitions/config.php');
+        $container->addDefinition(__DIR__ . '/definitions/config2.php');
+
+        $this->assertInstanceOf(
+            RegisterDefinition::class,
+            $instanceDef->getParameter(FourthTestClass::class, 'undefine1')
+        );
+    }
+
+    private function getInstance(?ContainerDefinition $definition = null): InstanceDefinition
+    {
+        return new InstanceDefinition($definition);
     }
 }

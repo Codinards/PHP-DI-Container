@@ -22,4 +22,44 @@ class Response
         $this->body = $body;
         $this->serverParams = $serverParams;
     }
+
+    /**
+     * Get the value of method
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * Get the value of uri
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Get the value of headers
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * Get the value of body
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * Get the value of serverParams
+     */
+    public function getServerParams()
+    {
+        return $this->serverParams;
+    }
 }
