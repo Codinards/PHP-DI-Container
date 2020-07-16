@@ -238,7 +238,7 @@ class ContainerTest extends TestCase
         $container->addDefinition(__DIR__ . '/definitions/config2.php');
         $this->expectException(DefinitionsException::class);
         $message = 'The argument "$name" pass in a definition closure in';
-        $message .= ' "/home/john/sites/MyContainer/tests/ContainerTest.php -> line:232"';
+        $message .= ' "/home/travis/build/JeanNguimfack/PHP-DI-Container/tests/ContainerTest.php -> line:232"';
         $message .= ' must be a string name of an instanciable class';
         $this->expectExceptionMessage($message);
         $this->assertInstanceOf(Request::class, $container->get(Request::class));
