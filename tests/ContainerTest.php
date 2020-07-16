@@ -4,13 +4,13 @@ namespace NJContainer\Tests;
 
 use Closure;
 use NJContainer\Container\Container;
-use NJContainer\Container\ContainerDefinition;
 use NJContainer\Container\Exceptions\ContainerException;
 use NJContainer\Container\Exceptions\DefinitionsException;
 use NJContainer\Container\Exceptions\InvalidArgumentException;
 use NJContainer\Container\Exceptions\NotFoundException;
 use NJContainer\Container\Exceptions\RecursiveException;
-use NJContainer\Container\InstanceDefinition;
+use function NJContainer\Container\factory;
+use function NJContainer\Container\get;
 use NJContainer\Tests\TestsClasses\EigthTestClass;
 use NJContainer\Tests\TestsClasses\FactoryTestClass;
 use NJContainer\Tests\TestsClasses\FifthTestClass;
@@ -27,18 +27,15 @@ use NJContainer\Tests\TestsClasses\SixthTestClass;
 use NJContainer\Tests\TestsClasses\ThirdTestClass;
 use PDO;
 use PHPUnit\Framework\TestCase;
+
 use Psr\Container\ContainerInterface;
 use stdClass;
-
-use function NJContainer\Container\factory;
-use function NJContainer\Container\get;
 
 /**
  * @codeCoverageIgnore
  */
 class ContainerTest extends TestCase
 {
-
     public function testSetDefinition()
     {
         $container = $this->getContainer();
@@ -115,7 +112,6 @@ class ContainerTest extends TestCase
 
     public function testSimpleAutowiring()
     {
-   
         $container = $this->getContainer();
         $this->assertTrue($container->has(ContainerInterface::class));
         $this->assertInstanceOf(Route::class, $container->get(Route::class, true));
@@ -242,7 +238,7 @@ class ContainerTest extends TestCase
         $container->addDefinition(__DIR__ . '/definitions/config2.php');
         $this->expectException(DefinitionsException::class);
         $message = 'The argument "$name" pass in a definition closure in';
-        $message .= ' "/home/john/sites/MyContainer/tests/ContainerTest.php -> line:236"';
+        $message .= ' "/home/john/sites/MyContainer/tests/ContainerTest.php -> line:232"';
         $message .= ' must be a string name of an instanciable class';
         $this->expectExceptionMessage($message);
         $this->assertInstanceOf(Request::class, $container->get(Request::class));

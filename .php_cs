@@ -1,34 +1,23 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . '/src')
-    ->in(__DIR__ . '/tests')
-;
 
-return PhpCsFixer\Config::create()
+$config = PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setRules([
-        '@Symfony' => true,
-        'binary_operator_spaces' => array(
-            'align_equals' => false,
-            'align_double_arrow' => true,
-        ),
-        '@Symfony:risky' => true,
+        '@PSR2' => true,
         'array_syntax' => ['syntax' => 'short'],
-        'linebreak_after_opening_tag' => true,
-        'mb_str_functions' => true,
-        'no_php4_constructor' => true,
-        'no_unreachable_default_argument_value' => true,
-        'no_useless_else' => true,
-        'no_useless_return' => true,
+        'declare_strict_types' => false,
+        'concat_space' => ['spacing'=>'one'],
+        //'php_unit_test_case_static_method_calls' => ['call_type' => 'self'],
         'ordered_imports' => true,
-        'php_unit_strict' => true,
-        'phpdoc_order' => true,
-        'semicolon_after_instruction' => true,
-        'strict_comparison' => true,
-        'strict_param' => true,
-        'concat_space' => ['spacing' => 'one'],
-        'trailing_comma_in_multiline_array' => false
+        // 'phpdoc_align' => ['align'=>'vertical'],
+        // 'native_function_invocation' => true,
     ])
-    ->setFinder($finder)
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+            ->in(__DIR__.'/src')
+            ->in(__DIR__.'/tests')
+    )
     ->setCacheFile(__DIR__.'/.php_cs.cache');
+
+return $config;

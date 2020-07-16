@@ -4,7 +4,6 @@ namespace NJContainer\Tests\TestsClasses;
 
 class EigthTestClass
 {
-  
     private $name;
 
     public function __construct($name)

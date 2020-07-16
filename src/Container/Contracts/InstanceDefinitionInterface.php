@@ -8,5 +8,4 @@ namespace NJContainer\Container\Contracts;
  */
 interface InstanceDefinitionInterface extends ContainerInterface
 {
-
 }

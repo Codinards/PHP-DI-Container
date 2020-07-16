@@ -7,7 +7,6 @@ namespace NJContainer\Tests\TestsClasses;
  */
 class NoInstanciableClass
 {
-
     private function __construct()
     {
     }

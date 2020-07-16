@@ -2,11 +2,11 @@
 
 namespace NJContainer\Container;
 
-use NJContainer\Tests\TestsClasses\Response;
 use NJContainer\Container\Contracts\ContainerInterface;
+use NJContainer\Container\Contracts\InstanceDefinitionInterface;
 use NJContainer\Container\Exceptions\ContainerException;
 use NJContainer\Container\Exceptions\DefinitionsException;
-use NJContainer\Container\Contracts\InstanceDefinitionInterface;
+use NJContainer\Tests\TestsClasses\Response;
 
 /**
  * @author Jean Nguimfack <nguimjeaner@gmail.com>

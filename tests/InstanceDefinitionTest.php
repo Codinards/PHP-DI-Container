@@ -4,11 +4,11 @@ namespace NJContainer\Tests;
 
 use NJContainer\Container\Container;
 use NJContainer\Container\ContainerDefinition;
+use function NJContainer\Container\get;
 use NJContainer\Container\InstanceDefinition;
 use NJContainer\Container\RegisterDefinition;
-use NJContainer\Tests\TestsClasses\FirstTestClass;
 
-use function NJContainer\Container\get;
+use NJContainer\Tests\TestsClasses\FirstTestClass;
 use NJContainer\Tests\TestsClasses\FourthTestClass;
 use PHPUnit\Framework\TestCase;
 

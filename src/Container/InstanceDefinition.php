@@ -2,19 +2,19 @@
 
 namespace NJContainer\Container;
 
-use ReflectionClass;
-use ReflectionFunction;
-use ReflectionException;
-use NJContainer\Container\RegisterDefinition;
 use NJContainer\Container\ContainerDefinition;
 use NJContainer\Container\Contracts\ContainerDefinitionInterface;
-use NJContainer\Container\Exceptions\NotFoundException;
+use NJContainer\Container\Contracts\InstanceDefinitionInterface;
 use NJContainer\Container\Exceptions\ContainerException;
-use NJContainer\Container\Exceptions\RecursiveException;
 use NJContainer\Container\Exceptions\DefinitionsException;
 use NJContainer\Container\Exceptions\InvalidArgumentException;
-use NJContainer\Container\Contracts\InstanceDefinitionInterface;
+use NJContainer\Container\Exceptions\NotFoundException;
+use NJContainer\Container\Exceptions\RecursiveException;
+use NJContainer\Container\RegisterDefinition;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
 
 /**
  * @author Jean Nguimfack <nguimjeaner@gmail.com>
@@ -34,19 +34,18 @@ class InstanceDefinition implements InstanceDefinitionInterface
      */
     public function __construct(?ContainerDefinitionInterface $container = null)
     {
-       
         $this->container = $container ?? new ContainerDefinition();
     }
 
-     /**
-     * Retrieve a dependency instance.
-     *
-     * @param string $name
-     * @param bool $shared
-     *
-     * @return mixed
-     * @throws \NJContainer\Container\Exceptions\ContainerException
-     */
+    /**
+    * Retrieve a dependency instance.
+    *
+    * @param string $name
+    * @param bool $shared
+    *
+    * @return mixed
+    * @throws \NJContainer\Container\Exceptions\ContainerException
+    */
     public function get($name, bool $shared = false)
     {
         if ($this->container->isResolving($name)) {
