@@ -23,7 +23,7 @@ interface ContainerInterface extends ContainerContainerInterface
      * @param string $id
      * @return bool
      */
-    public function has($id);
+    public function has(string $id): bool;
 
 
     public function set(string $id, $definition, bool $shared = false);

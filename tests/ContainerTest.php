@@ -40,7 +40,7 @@ class ContainerTest extends TestCase
     {
         $container = $this->getContainer();
         $this->assertInstanceOf(Container::class, $container->get(ContainerInterface::class));
-        $container->set('pdo', new PDO('sqlite::memory', null, null));
+        $container->set('pdo', new PDO('sqlite::' . __DIR__ . '/database/database.bd', null, null));
         $this->assertInstanceOf(PDO::class, $container->get('pdo'));
 
         /* Test NotFoundException */
@@ -65,7 +65,7 @@ class ContainerTest extends TestCase
         );
         $this->assertInstanceOf(EigthTestClass::class, $container->get(EigthTestClass::class));
     }
- 
+
     public function testSetSeveralDefinitionsUsingArray()
     {
         $definitions = [
@@ -88,7 +88,7 @@ class ContainerTest extends TestCase
         );
         $container->add($definitions);
     }
-    
+
     public function testLockContainerAndGetResolvingDefinitions()
     {
         $definitions = [
@@ -142,7 +142,7 @@ class ContainerTest extends TestCase
         );
         $container->setParameters(Response::class, ["method" => 'GET', 'uri' => "/"]);
 
-        
+
         /** Request assert part  */
         /** @var Request $request */
         $request = $container->get(Request::class);
@@ -234,11 +234,12 @@ class ContainerTest extends TestCase
                 }
             )
         );
+        $pwd = $_SERVER["PWD"] ?? false;
         $container->addDefinition(__DIR__ . '/definitions/config.php');
         $container->addDefinition(__DIR__ . '/definitions/config2.php');
         $this->expectException(DefinitionsException::class);
         $message = 'The argument "$name" pass in a definition closure in';
-        $message .= ' "/home/travis/build/JeanNguimfack/PHP-DI-Container/tests/ContainerTest.php -> line:232"';
+        $message .= ' "' . __DIR__ . '\ContainerTest.php -> line:232"';
         $message .= ' must be a string name of an instanciable class';
         $this->expectExceptionMessage($message);
         $this->assertInstanceOf(Request::class, $container->get(Request::class));

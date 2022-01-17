@@ -1,9 +1,7 @@
-
 # PHP Dependency Injection Container
 
 [![Build Status](https://travis-ci.org/JeanNguimfack/PHP-DI-Container.svg?branch=master)](https://travis-ci.org/JeanNguimfack/PHP-DI-Container)
 [![Coverage Status](https://coveralls.io/repos/github/JeanNguimfack/PHP-DI-Container/badge.svg?branch=master)](https://coveralls.io/github/JeanNguimfack/PHP-DI-Container?branch=master)
-
 
 A simple dependency injection container for php projects
 
@@ -15,15 +13,15 @@ composer require njeaner/di-container
 
 ## How to use it
 
-### Construct the container
+### Container Initialization
 
-#### Construct without parameter
+#### Initialize without parameter
 
 ```php
 $container = new \NJContainer\Container\Container();
 ```
 
-#### Construct using the parameter
+#### Initialize using the parameter
 
 The container can be constructed with:
 
@@ -46,20 +44,40 @@ $container = new \NJContainer\Container\Container($instance);
 
 ### Setting a dependency in the container
 
- Setting one definition
+Setting one definition
 
 ```php
-$container->set(string $id, $definition, bool $shared = false)    
+/**
+ * @param id string
+ * @param mixed $definition
+ * @param bool $shared, if "true" container will save this definition instance as a factory dependency
+*/
+$container->set($id, $definition)
+$container->set($id, $definition, true)
 ```
+
 Setting several definition using an array of definitions
 
 ```php
-$container->add(array $definitions)
+/**
+ * @param <string, array> $definitions
+ * @example [
+ *      'name'=> ['John Doe'],
+ *      'stdClass1'  => [new stdClass()],
+ *      \Namespace\Route::class => [new \Namespace\Route(), true]
+ * ];
+ * The true value as second item in dependency array means that you are storing an= factory dependency
+*/
+$container->add($definitions)
 ```
+
 Setting several definition using an file with return an array of definitions
 
 ```php
-$container->addDefinition(string $definitionsPath)
+/**
+ * @param string $definitionsPath, path directory of definition file
+*/
+$container->addDefinition($definitionsPath)
 ```
 
 ### Setting dependency parameters
@@ -67,19 +85,31 @@ $container->addDefinition(string $definitionsPath)
 Setting a parameter of an alias
 
 ```php
-$container->setParameter(string $id, string $name, $parameter)
+/**
+ * @param string $id definition id
+ * @param string $name parameter name
+ * @param mixed $parameter param value to set in definition
+*/
+$container->setParameter($id, $name, $parameter)
 ```
+
 Setting several parameter of an alias
 
 ```php
-$container->setParameters(string $id, array $parameters)
+/**
+ * @param string $id definition id
+ * @param array $parameters
+*/
+$container->setParameters($id, $parameters)
 ```
+
 ### Getting a dependency from the container
 
 ```php
+/**
+ * @param string $id
+ * @param bool $shared, if "true" container with retrieve a factory dependency
+*/
 $container->get($id)
-
-// or
-
-$container->get($id, true) to get an factory dependency
+$container->get($id, true)
 ```

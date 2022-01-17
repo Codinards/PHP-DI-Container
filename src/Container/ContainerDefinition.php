@@ -118,7 +118,7 @@ class ContainerDefinition implements ContainerDefinitionInterface
     {
         return $this->instances[$id];
     }
-    
+
 
     /**
      * Set a definition of an alias.
@@ -129,7 +129,7 @@ class ContainerDefinition implements ContainerDefinitionInterface
      *
      * @return self
      */
-    public function set(string $id, $definition, bool $shared = false):self
+    public function set(string $id, $definition, bool $shared = false): self
     {
         $this->instances[$id] = $definition;
         if ($shared) {
@@ -147,7 +147,7 @@ class ContainerDefinition implements ContainerDefinitionInterface
 
      * @return bool
      */
-    public function has($id)
+    public function has(string $id): bool
     {
         return isset($this->instances[$id]);
     }

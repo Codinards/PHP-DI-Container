@@ -38,20 +38,20 @@ class InstanceDefinition implements InstanceDefinitionInterface
     }
 
     /**
-    * Retrieve a dependency instance.
-    *
-    * @param string $name
-    * @param bool $shared
-    *
-    * @return mixed
-    * @throws \NJContainer\Container\Exceptions\ContainerException
-    */
+     * Retrieve a dependency instance.
+     *
+     * @param string $name
+     * @param bool $shared
+     *
+     * @return mixed
+     * @throws \NJContainer\Container\Exceptions\ContainerException
+     */
     public function get($name, bool $shared = false)
     {
         if ($this->container->isResolving($name)) {
             $this->throwCanNotResolveException(__METHOD__, $name, 2);
         }
-    
+
         $shared = $shared ?: $this->container->isShared($name);
 
         if (!$shared && $this->has($name)) {
@@ -61,8 +61,11 @@ class InstanceDefinition implements InstanceDefinitionInterface
             }
             if ($instance instanceof RegisterDefinition) {
                 $instance = $this->resolve($name, $instance);
-
-                if (method_exists($instance, '__invoke')) {
+                /** Change  */
+                if (is_array($instance)) {
+                    $instance = $this->resolveArray($name, $instance);
+                    /** End change */
+                } else if (method_exists($instance, '__invoke')) {
                     $refletionClass = new ReflectionClass($instance);
                     $method = $refletionClass->getMethod('__invoke');
                     $parameters = $method->getParameters();
@@ -81,7 +84,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
             if (\is_array($instance)) {
                 $instance = $this->resolveArray($name, $instance);
             }
-           
+
             $this->container->deleteResolvingId($name);
 
             return $instance;
@@ -97,7 +100,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
      *
      * @return bool
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return $this->container->has($name);
     }
@@ -306,7 +309,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
      *
      * @return boolean
      */
-    public function hasParameter(string $id, string $paramName):bool
+    public function hasParameter(string $id, string $paramName): bool
     {
         return $this->container->hasParameter($id, $paramName);
     }
@@ -397,7 +400,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
      *
      * @return ContainerDefinition
      */
-    public function getContainer():ContainerDefinition
+    public function getContainer(): ContainerDefinition
     {
         return $this->container;
     }

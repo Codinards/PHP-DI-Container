@@ -74,7 +74,7 @@ class Container implements ContainerInterface
      *
      * @return bool
      */
-    public function has($id)
+    public function has(string $id): bool
     {
         return $this->instance->has($id) ?? false;
     }
@@ -185,7 +185,7 @@ class Container implements ContainerInterface
      *
      * @return self
      */
-    public function setParameter(string $id, string $name, $parameter):self
+    public function setParameter(string $id, string $name, $parameter): self
     {
         $this->isNotLocked();
 
