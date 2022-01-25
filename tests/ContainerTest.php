@@ -40,8 +40,8 @@ class ContainerTest extends TestCase
     {
         $container = $this->getContainer();
         $this->assertInstanceOf(Container::class, $container->get(ContainerInterface::class));
-        $container->set('pdo', new PDO('sqlite::' . __DIR__ . '/database/database.bd', null, null));
-        $this->assertInstanceOf(PDO::class, $container->get('pdo'));
+        $container->set('sdtclass', new stdClass());
+        $this->assertInstanceOf(stdClass::class, $container->get('sdtclass'));
 
         /* Test NotFoundException */
         $this->expectException(NotFoundException::class);
