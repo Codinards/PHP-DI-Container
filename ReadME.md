@@ -113,3 +113,58 @@ $container->setParameters($id, $parameters)
 $container->get($id)
 $container->get($id, true)
 ```
+
+## Use example
+
+```php
+class Foo{
+
+}
+
+class Bar {
+    public function __construct(Foo $foo, $type = 'Bar'){
+        $this->foo = $foo;
+        $this->type = $type
+    }
+}
+
+class FooBar{
+    public function __construct(Foo $foo , string $name, array $params){
+
+    }
+}
+```
+
+```php
+    # config.php
+    # dependency configuration file
+
+    <?php
+    return [
+        'name'=> 'John Doe',
+        FooBar::class => get()->setParameters(
+            'name' => get('name'),
+            'params' => ['type' => FooBar::class]
+        )
+ ];
+```
+
+```php
+$container = new \NJContainer\Container\Container();
+
+$container->addDefinition('config.php');
+$arrayDefinition = [
+    FooBar::class => get()->setParameters(
+        'params' => add(['bool' => false])
+    )
+ ];
+ 
+$container->add($arrayDefintion);
+$container->lock();
+
+$fooObject = $container->get(Foo::class);
+$barObject = $container->get(Foo::class);
+// Foo::class and Bar::class has been resolved using autowiring
+
+$foobar = $container->get(FooBar::class);
+```
