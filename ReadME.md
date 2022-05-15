@@ -139,14 +139,16 @@ class FooBar{
     # config.php
     # dependency configuration file
 
-    <?php
+<?php
+    
     return [
         'name'=> 'John Doe',
         FooBar::class => get()->setParameters(
             'name' => get('name'),
             'params' => ['type' => FooBar::class]
         )
- ];
+    ];
+    
 ```
 
 ```php
