@@ -19,14 +19,12 @@ use ReflectionFunction;
 /**
  * @author Jean Nguimfack <nguimjeaner@gmail.com>
  */
-class InstanceDefinition implements InstanceDefinitionInterface
+class InstanceDefinitionOld implements InstanceDefinitionInterface
 {
     /**
      * @var ContainerDefinition
      */
     protected $container;
-
-    protected array $mainKeys = [];
 
 
     /**
@@ -63,31 +61,36 @@ class InstanceDefinition implements InstanceDefinitionInterface
             }
             if ($instance instanceof RegisterDefinition) {
                 $instance = $this->resolve($name, $instance);
+                /** Change  */
+                if (is_array($instance)) {
+                    $instance = $this->resolveArray($name, $instance);
+                    /** End change */
+                } else if (method_exists($instance, '__invoke')) {
+                    $refletionClass = new ReflectionClass($instance);
+                    $method = $refletionClass->getMethod('__invoke');
+                    $parameters = $method->getParameters();
+                    if (count($parameters) === 1) {
+                        $paramName = $parameters[0]->getClass()->getName();
+                        if ($this->has($paramName)) {
+                            $paramInstance = $this->get($paramName);
+                            if ($paramInstance instanceof ContainerInterface) {
+                                $instance = $instance($paramInstance);
+                                $this->container->set($name, $instance);
+                            }
+                        }
+                    }
+                }
             }
             if (\is_array($instance)) {
                 $instance = $this->resolveArray($name, $instance);
             }
+
             $this->container->deleteResolvingId($name);
-            $this->add($name, $instance);
+
             return $instance;
         }
 
         return $this->resolveReflection($name);
-    }
-
-    /**
-     * Set a resolved key in dependency container
-     *
-     * @param string $name
-     * @param mixed $instance
-     * @param bool $addSubResolved
-     * @return void
-     */
-    private function add(string $name, mixed $instance, bool $addSubResolved = false): void
-    {
-        if (!$this->isShared($name) and ($this->hasMainKey($name)) or $addSubResolved) {
-            $this->container->set($name, $instance);
-        }
     }
 
     /**
@@ -97,7 +100,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
      *
      * @return bool
      */
-    public function has($name): bool
+    public function has(string $name): bool
     {
         return $this->container->has($name);
     }
@@ -145,15 +148,15 @@ class InstanceDefinition implements InstanceDefinitionInterface
                 return $instance;
             }
         }
-        $alias = $alias ?? $name;
-        if (!class_exists($alias)) {
+        $name = $alias ?? $name;
+        if (!class_exists($name)) {
             $value = $registerDefinition->getValue();
             if ($value and is_array($value)) {
-                return $this->resolveArray($alias, $value);
+                return $this->resolveArray($name, $value);
             }
         }
 
-        return $this->resolveReflection($alias, $registerDefinition);
+        return $this->resolveReflection($name, $registerDefinition);
     }
 
     /**
@@ -189,11 +192,8 @@ class InstanceDefinition implements InstanceDefinitionInterface
 
                             return $value;
                         } catch (ReflectionException $e) {
-
-                            if ($type = $param->getType() and (class_exists($type->getName()) or interface_exists($type->getName()))) {
-
-                                $definition = $type->getName();
-
+                            if ($param->getClass()) {
+                                $definition = $param->getClass()->getName();
                                 $shared = $this->container->isShared($definition);
 
                                 return $this->get($definition, $shared);
@@ -225,9 +225,11 @@ class InstanceDefinition implements InstanceDefinitionInterface
                 );
             }
 
-            $this->container->deleteResolvingId($name);
+            if (!$this->getContainer()->isShared($name)) {
+                $this->container->set($name, $instance);
+            }
 
-            $this->add($name, $instance, true);
+            $this->container->deleteResolvingId($name);
 
             return $instance;
         }
@@ -251,7 +253,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
 
         return $instance->invokeArgs(
             array_map(function ($param) use ($instance) {
-                if (!($type = $param->getType()) or (!class_exists($type->getName()) and !interface_exists($type->getName()))) {
+                if (!$param->getClass()) {
                     $message = 'The argument "$' . $param->getName() . '" pass in a definition closure in "';
                     $message .= $instance->getFileName() . ' -> line:' . $instance->getStartLine();
                     $message .= '" must be a string name of an instanciable class';
@@ -259,7 +261,7 @@ class InstanceDefinition implements InstanceDefinitionInterface
                     throw new DefinitionsException($message);
                 }
 
-                return $this->get($param->getType()->getName());
+                return $this->get($param->getClass()->getName());
             }, $parameters)
         );
     }
@@ -417,28 +419,5 @@ class InstanceDefinition implements InstanceDefinitionInterface
             throw new RecursiveException("Recursive dependency when resolving \"$name\"");
         }
         throw new ContainerException('the method "' . $method . "\" can not resolve the key \"$name\"");
-    }
-
-    /**
-     * Add resolved key in container main keys
-     * Main keys are those is get directly be user from main container
-     *
-     * @param string $key
-     * @return self
-     */
-    public function addMainKey(string $key): self
-    {
-        $this->mainKeys[] = $key;
-
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @return boolean
-     */
-    private function hasMainKey(string $key): bool
-    {
-        return in_array($key, $this->mainKeys);
     }
 }

@@ -71,7 +71,9 @@ class ContainerTest extends TestCase
         $definitions = [
             'name'       => ['John Doe'],
             'stdClass1'  => [new stdClass()],
-            Route::class => [new Route(), true]
+            Route::class => [function () {
+                return new Route();
+            }, true]
         ];
 
         $container = $this->getContainer()->add($definitions);
@@ -239,7 +241,7 @@ class ContainerTest extends TestCase
         $container->addDefinition(__DIR__ . '/definitions/config2.php');
         $this->expectException(DefinitionsException::class);
         $message = 'The argument "$name" pass in a definition closure in';
-        $message .= ' "' . __DIR__ . '\ContainerTest.php -> line:232"';
+        $message .= ' "' . __DIR__ . '\ContainerTest.php -> line:234"';
         $message .= ' must be a string name of an instanciable class';
         $this->expectExceptionMessage($message);
         $this->assertInstanceOf(Request::class, $container->get(Request::class));
@@ -253,7 +255,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(FirstTestClass::class, $container->get(FirstTestClass::class));
         $this->assertInstanceOf(SecondTestClass::class, $container->get(SecondTestClass::class));
         $this->assertInstanceOf(ThirdTestClass::class, $container->get(ThirdTestClass::class));
-        $this->assertInstanceOf(Route::class, $container->get(FactoryTestClass::class));
+        $this->assertInstanceOf(Route::class, ($container->get(FactoryTestClass::class)($container)));
         $sevenTestClass = $container->get(SeventhTestClass::class);
         $this->assertInstanceOf(SeventhTestClass::class, $sevenTestClass);
         $this->assertIsArray($sevenTestClass->getParams());
@@ -277,9 +279,8 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(Response::class, $container->get(Response::class));
         $this->assertInstanceOf(Route::class, $router1);
         $this->assertInstanceOf(Route::class, $router2);
+        $this->assertSame($router1, $router2);
         $this->assertInstanceOf(EigthTestClass::class, $eightTestClass);
-        $this->assertSame($router1, $router2);
-        $this->assertSame($router1, $router2);
         $this->assertEquals('John Doe', $eightTestClass->getName());
         $this->assertInstanceOf(EigthTestClass::class, $container->get(NineTestClass::class)->getEigthTestClass());
     }

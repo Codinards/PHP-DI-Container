@@ -52,16 +52,9 @@ class Container implements ContainerInterface
      */
     public function get($id, $shared = false)
     {
-        if ($this)
-            if (!$shared && $this->has($id)) {
-                return $this->instance->get($id);
-            }
+        $this->instance->addMainKey($id);
 
-        if ($shared) {
-            return $this->instance->get($id, $shared);
-        }
-
-        return $this->instance->get($id);
+        return $this->instance->get($id, $shared);
     }
 
     /**
