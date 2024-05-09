@@ -58,6 +58,9 @@ class InstanceDefinition implements InstanceDefinitionInterface
 
         if (!$shared && $this->has($name)) {
             $instance = $this->container->get($name);
+            if (class_exists($name) && $instance instanceof $name) {
+                return $instance;
+            }
             if (\is_callable($instance)) {
                 $instance = $this->resolveCallback($instance);
             }
